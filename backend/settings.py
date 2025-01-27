@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'api',
+    'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -131,14 +132,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email settings for OTP
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# DEBUG=True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'gulshankumar060102@gmail.com'  # Replace with your Gmail
-EMAIL_HOST_USER_PASSWORD = 'fcuyfppvmnahuwud'  # Replace with your app password
+EMAIL_HOST_PASSWORD = 'suqmorbxlufjgtur'  # Replace with your app password
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 # API Settings

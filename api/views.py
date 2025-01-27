@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
 from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 from django.conf import settings
@@ -13,6 +13,7 @@ from .models import GarbageReport
 from .serializers import UserSerializer, GarbageReportSerializer
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
+
 
 @api_view(['POST'])
 def send_otp(request):
@@ -142,6 +143,33 @@ def verify_otp(request):
             
     except Exception as e:
         return Response({'error': f'Verification failed: {str(e)}'}, status=500)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_report_status(request, report_id):
+    try:
+        report = GarbageReport.objects.get(id=report_id)
+        new_status = request.data.get('status')
+        
+        if new_status not in dict(GarbageReport.STATUS_CHOICES):
+            return Response(
+                {'error': 'Invalid status'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        report.status = new_status
+        report.save()
+        
+        serializer = GarbageReportSerializer(report)
+        return Response(serializer.data)
+        
+    except GarbageReport.DoesNotExist:
+        return Response(
+            {'error': 'Report not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
 
 class GarbageReportViewSet(viewsets.ModelViewSet):
     queryset = GarbageReport.objects.all()

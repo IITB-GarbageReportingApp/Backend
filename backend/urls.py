@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from api.views import GarbageReportViewSet, send_otp, verify_otp, login
+from api.views import GarbageReportViewSet, send_otp, verify_otp, login, update_report_status
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -14,5 +14,7 @@ urlpatterns = [
     path('api/send-otp/', send_otp),
     path('api/verify-otp/', verify_otp),
     path('api/login/', login),
+    path('api/reports/<int:report_id>/status/', update_report_status),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

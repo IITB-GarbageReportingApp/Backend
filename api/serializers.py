@@ -17,4 +17,4 @@ class GarbageReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = GarbageReport
         fields = '__all__'
-        read_only_fields = ('user', 'reported_at')
+        read_only_fields = ('user', 'reported_at', 'zone', 'status')

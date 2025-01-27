@@ -1,0 +1,100 @@
+{
+    "zones": [
+      {
+        "zone_number": 1,
+        "zone_name": "Zone 1",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 1"
+      },
+      {
+        "zone_number": 2,
+        "zone_name": "Zone 2",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 2"
+      },
+      {
+        "zone_number": 3,
+        "zone_name": "Zone 3",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 3"
+      },
+      {
+        "zone_number": 4,
+        "zone_name": "Zone 4",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 4"
+      },
+      {
+        "zone_number": 5,
+        "zone_name": "Zone 5",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 5"
+      },
+      {
+        "zone_number": 6,
+        "zone_name": "Zone 6",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 6"
+      },
+      {
+        "zone_number": 7,
+        "zone_name": "Zone 7",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 7"
+      },
+      {
+        "zone_number": 8,
+        "zone_name": "Zone 8",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 8"
+      },
+      {
+        "zone_number": 9,
+        "zone_name": "Zone 9",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 9"
+      },
+      {
+        "zone_number": 10,
+        "zone_name": "Zone 10",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 10"
+      },
+      {
+        "zone_number": 11,
+        "zone_name": "Zone 11",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 11"
+      },
+      {
+        "zone_number": 12,
+        "zone_name": "Zone 12",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 12"
+      },
+      {
+        "zone_number": 13,
+        "zone_name": "Zone 13",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 13"
+      },
+      {
+        "zone_number": 14,
+        "zone_name": "Zone 14",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 14"
+      },
+      {
+        "zone_number": 15,
+        "zone_name": "Zone 15",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 15"
+      },
+      {
+        "zone_number": 16,
+        "zone_name": "Zone 16",
+        "email": "gulshan.iitb@gmail.com",
+        "area_name": "Area 16"
+      }
+    ]
+  }
