@@ -7,7 +7,7 @@ def delete_reports(report_ids, access_token):
     
     results = []
     for report_id in report_ids:
-        url = f'http://192.168.0.108:8000/api/reports/{report_id}/'
+        url = f'http://10.96.28.189:8000/api/reports/{report_id}/'
         try:
             response = requests.delete(url, headers=headers)
             results.append({
@@ -27,8 +27,8 @@ def delete_reports(report_ids, access_token):
     return results
 
 # Usage
-access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4MDA4OTYwLCJpYXQiOjE3MzgwMDUzNjAsImp0aSI6IjQzN2M4YjI5M2ExODQwZTNhNzZiMmVkMDE2NDllMDBkIiwidXNlcl9pZCI6Mn0.p_0JCxZzQY9zf1wRvRk811i7bPa5k098J0pAR77z_2c"  # Replace with your actual token
-report_ids = [9,10,11,12,13,14,15,16]  # Add all the report IDs you want to delete
+access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4MjQwMjA2LCJpYXQiOjE3MzgyMzY2MDYsImp0aSI6ImQ2NTk5NjIxYWJmNzQ0Y2E4NDY2NjliOGE1YzZiMzA2IiwidXNlcl9pZCI6Mn0.dG5xDCrrztE6w7fJ15t6lmZBLCI868T3R50S2eO6g-w"  # Replace with your actual token
+report_ids = [46,47,48,49,50]  # Add all the report IDs you want to delete
 
 results = delete_reports(report_ids, access_token)
 

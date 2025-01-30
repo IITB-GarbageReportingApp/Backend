@@ -13,8 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
+# api/serializers.py
 class GarbageReportSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    
     class Meta:
         model = GarbageReport
-        fields = '__all__'
+        fields = ('id', 'image', 'description', 'latitude', 'longitude', 
+                 'reported_at', 'status', 'zone', 'user', 'username')
         read_only_fields = ('user', 'reported_at', 'zone', 'status')
