@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
 from django.contrib.auth import authenticate
@@ -9,10 +9,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 import random
 import time
-from .models import GarbageReport
+from .models import GarbageReport, WorkerProfile
 from .serializers import UserSerializer, GarbageReportSerializer
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone
+
 
 
 @api_view(['POST'])
@@ -57,13 +59,13 @@ def login(request):
     try:
         email = request.data.get('email')
         password = request.data.get('password')
+        user_type = request.data.get('user_type', 'user')  # Default to 'user' if not specified
         
         if not email or not password:
             return Response({
                 'error': 'Email and password are required'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Get username from email since Django's authenticate uses username
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
@@ -71,14 +73,23 @@ def login(request):
                 'error': 'No account found with this email'
             }, status=status.HTTP_404_NOT_FOUND)
         
-        # Authenticate user with username and password
-        user = authenticate(username=user.username, password=password)
+        # Verify user type matches
+        if user_type == 'worker':
+            try:
+                worker_profile = user.workerprofile
+                if not worker_profile.is_worker:
+                    return Response({
+                        'error': 'This account is not authorized as a J.E.'
+                    }, status=status.HTTP_403_FORBIDDEN)
+            except WorkerProfile.DoesNotExist:
+                return Response({
+                    'error': 'This account is not authorized as a J.E.'
+                }, status=status.HTTP_403_FORBIDDEN)
         
+        user = authenticate(username=user.username, password=password)
         if user is not None:
-            # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
-            
-            return Response({
+            response_data = {
                 'token': str(refresh.access_token),
                 'refresh': str(refresh),
                 'user': {
@@ -86,17 +97,24 @@ def login(request):
                     'username': user.username,
                     'email': user.email
                 }
-            }, status=status.HTTP_200_OK)
+            }
+            
+            # Add worker information if applicable
+            if user_type == 'worker':
+                response_data['user']['worker_profile'] = {
+                    'zone': user.workerprofile.zone,
+                    'is_worker': True
+                }
+            
+            return Response(response_data, status=status.HTTP_200_OK)
         else:
             return Response({
                 'error': 'Invalid credentials'
             }, status=status.HTTP_401_UNAUTHORIZED)
-            
     except Exception as e:
         return Response({
             'error': f'Login failed: {str(e)}'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
 @api_view(['POST'])
 def verify_otp(request):
@@ -172,14 +190,104 @@ def update_report_status(request, report_id):
     
 
 class GarbageReportViewSet(viewsets.ModelViewSet):
-    queryset = GarbageReport.objects.all()
     serializer_class = GarbageReportSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self):
-        return GarbageReport.objects.all().select_related('user').order_by('-reported_at')
+    queryset = GarbageReport.objects.none()  # Add this line to provide a default queryset
 
     def perform_create(self, serializer):
+        # Set the user to the current authenticated user
         serializer.save(user=self.request.user)
+
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_authenticated:
+            # For unauthenticated users, return all reports
+            return GarbageReport.objects.all().select_related('user').order_by('-reported_at')
+        
+        # Check if user is a worker
+        try:
+            worker_profile = user.workerprofile
+            if worker_profile.is_worker:
+                # Workers see reports from their zone
+                return GarbageReport.objects.filter(
+                    assigned_worker=worker_profile
+                ).select_related('user').order_by('-reported_at')
+        except WorkerProfile.DoesNotExist:
+            # Regular users see their own reports
+            return GarbageReport.objects.filter(
+                user=user
+            ).select_related('user').order_by('-reported_at')
+
+    @action(detail=True, methods=['post'])
+    def update_status(self, request, pk=None):
+        report = self.get_object()
+        new_status = request.data.get('status')
+        completion_image = request.FILES.get('completion_image')
+        worker_notes = request.data.get('worker_notes')
+
+        if new_status not in dict(GarbageReport.STATUS_CHOICES):
+            return Response(
+                {'error': 'Invalid status'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Validate completion image for COMPLETED status
+        if new_status == 'COMPLETED':
+            if not completion_image:
+                return Response(
+                    {'error': 'Completion image is required to mark as completed'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            report.completion_image = completion_image
+            report.completed_at = timezone.now()
+
+        report.status = new_status
+        if worker_notes:
+            report.worker_notes = worker_notes
+        report.save()
+        
+        return Response(GarbageReportSerializer(report).data)
+
+    @action(detail=True, methods=['post'])
+    def mark_viewed(self, request, pk=None):
+        report = self.get_object()
+        report.is_viewed = True
+        report.save()
+        return Response({'status': 'success'})
+
+    @action(detail=True, methods=['post'])
+    def close_report(self, request, pk=None):
+        report = self.get_object()
+        
+        # Only allow the report creator to close it
+        if report.user != request.user:
+            return Response(
+                {'error': 'Not authorized to close this report'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+            
+        report.status = 'CLOSED'
+        report.save()
+        return Response(GarbageReportSerializer(report).data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_unviewed_reports_count(request):
+    """Get count of unviewed reports for a worker"""
+    try:
+        worker_profile = request.user.workerprofile
+        count = GarbageReport.objects.filter(
+            assigned_worker=worker_profile,
+            is_viewed=False,
+            status='SENT'  # Only count reports with SENT status
+        ).count()
+        return Response({'count': count})
+    except WorkerProfile.DoesNotExist:
+        return Response(
+            {'error': 'User is not a worker'},
+            status=status.HTTP_403_FORBIDDEN
+        )  
 
     

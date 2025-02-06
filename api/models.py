@@ -1,4 +1,3 @@
-# models.py - Update the existing GarbageReport model
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -8,15 +7,36 @@ from django.dispatch import receiver
 import json
 import os
 
+class WorkerProfile(models.Model):
+    """
+    Model to store worker-specific information including their assigned zone
+    """
+    ZONE_CHOICES = [(i, f'Zone {i}') for i in range(1, 17)]  # Creates choices from Zone 1 to Zone 16
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    zone = models.IntegerField(choices=ZONE_CHOICES)
+    is_worker = models.BooleanField(default=True)  # Identifies the user as a worker
+
+    def __str__(self):
+        return f"{self.user.username} - Zone {self.zone}"
+
+    class Meta:
+        verbose_name = "Worker Profile"
+        verbose_name_plural = "Worker Profiles"
+
 class GarbageReport(models.Model):
+    """
+    Enhanced GarbageReport model with additional fields for worker interactions
+    """
     STATUS_CHOICES = [
         ('SENT', 'Sent'),
         ('RECEIVED', 'Received'),
         ('IN_PROGRESS', 'In Progress'),
         ('COMPLETED', 'Completed'),
+        ('CLOSED', 'Closed'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reports')
     image = models.ImageField(upload_to='garbage_reports/')
     description = models.TextField()
     latitude = models.FloatField()
@@ -24,6 +44,33 @@ class GarbageReport(models.Model):
     reported_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='SENT')
     zone = models.CharField(max_length=100, blank=True)
+    completion_image = models.ImageField(upload_to='completion_reports/', null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    is_viewed = models.BooleanField(default=False)
+    worker_notes = models.TextField(blank=True, null=True)
+    assigned_worker = models.ForeignKey(
+        WorkerProfile, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='assigned_reports'
+    )
+
+    def save(self, *args, **kwargs):
+        # Determine zone and auto-assign worker if this is a new report
+        if not self.zone:
+            self.zone = self.determine_zone()
+            
+            # Auto-assign worker based on zone
+            if self.zone != "Unknown Zone":
+                zone_number = int(self.zone.split()[-1])
+                try:
+                    worker = WorkerProfile.objects.get(zone=zone_number)
+                    self.assigned_worker = worker
+                except WorkerProfile.DoesNotExist:
+                    pass
+                    
+        super().save(*args, **kwargs)
 
     def get_zone_email(self):
         """Get email address for the current zone from email.json"""
@@ -49,10 +96,7 @@ class GarbageReport(models.Model):
             print(f"Error getting zone email: {str(e)}")
             return None
 
-    def save(self, *args, **kwargs):
-        if not self.zone:
-            self.zone = self.determine_zone()
-        super().save(*args, **kwargs)
+    
 
     def point_in_polygon(self, point, polygon):
         """

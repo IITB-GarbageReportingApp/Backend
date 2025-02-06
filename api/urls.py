@@ -1,19 +1,14 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (
-    GarbageReportViewSet,
-    login,
-    verify_otp,
-    send_otp
-)
+from . import views
 
 router = DefaultRouter()
-router.register('reports', GarbageReportViewSet, basename='garbage-reports')
+router.register('reports', views.GarbageReportViewSet, basename='garbage-reports')
 
 urlpatterns = [
-    path('login/', login, name='login'),
-    path('send-otp/', send_otp, name='send-otp'),
-    path('verify-otp/', verify_otp, name='verify-otp'),
+    path('', include(router.urls)),
+    path('login/', views.login, name='login'),
+    path('send-otp/', views.send_otp, name='send-otp'),
+    path('verify-otp/', views.verify_otp, name='verify-otp'),
+    path('unviewed-reports/', views.get_unviewed_reports_count, name='unviewed-reports'),
 ]
-
-urlpatterns += router.urls
