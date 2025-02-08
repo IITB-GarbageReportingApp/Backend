@@ -12,3 +12,7 @@ urlpatterns = [
     path('verify-otp/', views.verify_otp, name='verify-otp'),
     path('unviewed-reports/', views.get_unviewed_reports_count, name='unviewed-reports'),
 ]
+
+
+
+
