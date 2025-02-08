@@ -76,22 +76,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Security Settings for HTTPS
-SECURE_SSL_REDIRECT = True  # Redirects all HTTP traffic to HTTPS
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Helps Django understand it's behind a proxy
+# # Security Settings for HTTPS
+# SECURE_SSL_REDIRECT = True  # Redirects all HTTP traffic to HTTPS
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Helps Django understand it's behind a proxy
 
-# HSTS Settings (HTTP Strict Transport Security)
-SECURE_HSTS_SECONDS = 31536000  # 1 year in seconds
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Applies HSTS to all subdomains
-SECURE_HSTS_PRELOAD = True  # Allows preloading of HSTS by browsers
+# # HSTS Settings (HTTP Strict Transport Security)
+# SECURE_HSTS_SECONDS = 31536000  # 1 year in seconds
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Applies HSTS to all subdomains
+# SECURE_HSTS_PRELOAD = True  # Allows preloading of HSTS by browsers
 
-# Cookie Settings
-SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
-CSRF_COOKIE_SECURE = True  # Ensures CSRF cookies are only sent over HTTPS
+# # Cookie Settings
+# SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
+# CSRF_COOKIE_SECURE = True  # Ensures CSRF cookies are only sent over HTTPS
 
-# Additional Security Settings
-SECURE_BROWSER_XSS_FILTER = True  # Enables XSS filtering in browsers
-SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents MIME type sniffing
+# # Additional Security Settings
+# SECURE_BROWSER_XSS_FILTER = True  # Enables XSS filtering in browsers
+# SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents MIME type sniffing
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
