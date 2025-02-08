@@ -27,7 +27,7 @@ class GarbageReportSerializer(serializers.ModelSerializer):
             'id', 'image', 'description', 'latitude', 'longitude', 
             'reported_at', 'status', 'zone', 'user', 'username',
             'completion_image', 'completed_at', 'is_viewed',
-            'worker_notes', 'worker_name', 'worker_zone'
+            'worker_notes', 'worker_name', 'worker_zone', 'video'
         )
         read_only_fields = ('user', 'reported_at', 'zone', 'assigned_worker')
     username = serializers.CharField(source='user.username', read_only=True)
@@ -40,7 +40,7 @@ class GarbageReportSerializer(serializers.ModelSerializer):
             'id', 'image', 'description', 'latitude', 'longitude', 
             'reported_at', 'status', 'zone', 'user', 'username',
             'completion_image', 'completed_at', 'is_viewed',
-            'worker_notes', 'worker_name', 'worker_zone'
+            'worker_notes', 'worker_name', 'worker_zone', 'video'
         )
         read_only_fields = ('user', 'reported_at', 'zone', 'assigned_worker')
         

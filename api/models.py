@@ -38,6 +38,7 @@ class GarbageReport(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reports')
     image = models.ImageField(upload_to='garbage_reports/')
+    video = models.FileField(upload_to='garbage_videos/', null=True, blank=True)
     description = models.TextField()
     latitude = models.FloatField()
     longitude = models.FloatField()
