@@ -5,6 +5,8 @@ from api import views
 from api.views import GarbageReportViewSet, send_otp, verify_otp, login, update_report_status
 from django.conf import settings
 from django.conf.urls.static import static
+from api.dashboard_views import dashboard, report_detail
+
 
 router = DefaultRouter()
 router.register(r'reports', GarbageReportViewSet, basename='garbage-reports')
@@ -17,5 +19,12 @@ urlpatterns = [
     path('api/login/', login),
     path('api/reports/<int:report_id>/status/', update_report_status),
     path('api/unviewed-reports/', views.get_unviewed_reports_count, name='unviewed-reports'),
+
+     # Dashboard URLs
+    path('dashboard/', dashboard, name='dashboard'),
+    path('reports/<int:report_id>/', report_detail, name='report-detail'),
+    
+    # Add a simple logout URL
+    path('logout/', views.logout_view, name='logout'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

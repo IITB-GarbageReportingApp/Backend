@@ -14,8 +14,17 @@ from .serializers import UserSerializer, GarbageReportSerializer
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 
+@api_view(['GET'])
+def logout_view(request):
+    """
+    Log out the current user and redirect to the home page
+    """
+    logout(request)
+    return redirect('/')
 
 @api_view(['POST'])
 def send_otp(request):

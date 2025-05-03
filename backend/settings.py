@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-x+ka=tn86wq*^y(p0a^r4ug(x3n#1!d4f=$$6mpemb%%hw=drn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -61,7 +61,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'api/templates')],  # Add this line
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,21 +77,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Security Settings for HTTPS
-SECURE_SSL_REDIRECT = True  # Redirects all HTTP traffic to HTTPS
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Helps Django understand it's behind a proxy
+# SECURE_SSL_REDIRECT = False  # Redirects all HTTP traffic to HTTPS
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Helps Django understand it's behind a proxy
 
-# HSTS Settings (HTTP Strict Transport Security)
-SECURE_HSTS_SECONDS = 31536000  # 1 year in seconds
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Applies HSTS to all subdomains
-SECURE_HSTS_PRELOAD = True  # Allows preloading of HSTS by browsers
+# # HSTS Settings (HTTP Strict Transport Security)
+# SECURE_HSTS_SECONDS = 31536000  # 1 year in seconds
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Applies HSTS to all subdomains
+# SECURE_HSTS_PRELOAD = True  # Allows preloading of HSTS by browsers
 
-# Cookie Settings
-SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
-CSRF_COOKIE_SECURE = True  # Ensures CSRF cookies are only sent over HTTPS
+# # Cookie Settings
+# SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
+# CSRF_COOKIE_SECURE = True  # Ensures CSRF cookies are only sent over HTTPS
 
-# Additional Security Settings
-SECURE_BROWSER_XSS_FILTER = True  # Enables XSS filtering in browsers
-SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents MIME type sniffing
+# # Additional Security Settings
+# SECURE_BROWSER_XSS_FILTER = True  # Enables XSS filtering in browsers
+# SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents MIME type sniffing
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
