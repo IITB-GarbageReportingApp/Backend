@@ -101,7 +101,7 @@
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-all">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 mt-6 rounded transition-all">
                             Apply Filter
                         </button>
                     </div>
@@ -228,7 +228,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <a href="{% url 'report-detail' report.id %}" class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                    <button class="text-green-600 hover:text-green-900 update-status-btn" data-report-id="{{ report.id }}">Update</button>
+                                    {% comment %} <button class="text-green-600 hover:text-green-900 update-status-btn" data-report-id="{{ report.id }}">Update</button> {% endcomment %}
                                 </td>
                             </tr>
                             {% empty %}
@@ -315,7 +315,9 @@
             weekday: 'long',
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            timeZone: 'Asia/Kolkata'
+
         });
 
         // User menu toggle
@@ -382,17 +384,24 @@
                 }
                 formData.append('completion_image', completionImage);
             }
-            const csrftoken = getCookie('csrftoken');
-
             
-            fetch(`/api/reports/${reportId}/status/`, {
-                method: 'PATCH',
+            // Get CSRF token from cookie
+            const csrftoken = getCookie('csrftoken');
+            
+            fetch(`/api/reports/${reportId}/update_status/`, {
+                method: 'POST',
                 headers: {
                     'X-CSRFToken': csrftoken,
                 },
-                body: formData
+                body: formData,
+                credentials: 'include'  // Changed from 'same-origin' to 'include'
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 modal.classList.add('hidden');
                 // Reload the page to reflect changes

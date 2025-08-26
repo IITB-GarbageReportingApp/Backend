@@ -114,6 +114,7 @@
                                     </div>
                                 </div>
                                 
+                                
                                 {% if report.video %}
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500 mb-2">Report Video</h3>
@@ -149,7 +150,7 @@
                 <!-- Sidebar -->
                 <div class="lg:col-span-1">
                     <!-- Status Update Card -->
-                    <div class="bg-white rounded-lg shadow mb-6">
+                    {% comment %} <div class="bg-white rounded-lg shadow mb-6">
                         <div class="px-6 py-4 border-b border-gray-200">
                             <h2 class="text-lg font-semibold text-gray-800">Update Status</h2>
                         </div>
@@ -180,7 +181,7 @@
                                 </button>
                             </form>
                         </div>
-                    </div>
+                    </div> {% endcomment %}
                     
                     <!-- Timeline Card -->
                     <div class="bg-white rounded-lg shadow">

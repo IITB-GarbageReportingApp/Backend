@@ -5,6 +5,8 @@ from api import views
 from api.views import GarbageReportViewSet, send_otp, verify_otp, login, update_report_status
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
+
 from api.dashboard_views import dashboard, report_detail
 
 
@@ -27,4 +29,6 @@ urlpatterns = [
     # Add a simple logout URL
     path('logout/', views.logout_view, name='logout'),
 
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

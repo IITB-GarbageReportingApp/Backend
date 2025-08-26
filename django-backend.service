@@ -1,0 +1,17 @@
+[Unit]
+Description=Django Backend Service
+After=network.target
+
+[Service]
+Type=simple
+User=your_username
+Group=your_username
+WorkingDirectory=/d/backend
+Environment=PATH=/d/backend/venv/Scripts
+ExecStart=/d/backend/venv/Scripts/gunicorn.exe --config gunicorn.conf.py backend.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
